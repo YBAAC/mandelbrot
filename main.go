@@ -1,31 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
 	"math/cmplx"
 	"os"
+	"strings"
 )
 
 func main() {
 	const (
 		xmin, ymin, xmax, ymax = -2, -2, 2, 2
-		width, height          = 51200, 51200
+		width, height          = 8192, 8192
 	)
 
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	for py := 0; py < height; py++ {
+		progress := py * 100 / height
+		if (py % 10) == 0 {
+			fmt.Printf("\rProgress: [%-50s] %d%%", strings.Repeat("#", progress/2), progress)
+		}
 		y := float64(py)/height*(ymax-ymin) + ymin
 		for px := 0; px < width; px++ {
+
 			x := float64(px)/width*(xmax-xmin) + xmin
 			z := complex(x, y)
 			img.Set(px, py, mandelbrot(z))
 		}
 	}
-
-	f, err := os.Create("mandelbrot.png")
+	f, err := os.Create("mandelbrot.jpg")
 	if err != nil {
 		panic(err)
 	}
@@ -34,14 +40,18 @@ func main() {
 }
 
 func mandelbrot(z complex128) color.Color {
-	const iterations = 200
-	const contrast = 15
+	const iterations = 500
+	const contrast = 3855
 
 	var v complex128
-	for n := uint8(0); n < iterations; n++ {
+	maxc, minc, midc := uint16(65535), uint16(0), uint16(32766)
+	for n := uint16(0); n < iterations; n++ {
 		v = v*v + z
 		if cmplx.Abs(v) > 2 {
-			return color.Gray{255 - contrast*n}
+			r := maxc - contrast*n
+			g := midc + contrast*n
+			b := minc + contrast*n
+			return color.RGBA64{r, g, b, 65535}
 		}
 	}
 	return color.Black
