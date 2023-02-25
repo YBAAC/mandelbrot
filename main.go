@@ -19,7 +19,7 @@ func main() {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	for py := 0; py < (height/2 + 1); py++ {
-		progress := py * 100 / height
+		progress := py * 100 / height * 2
 		if (py % 10) == 0 {
 			fmt.Printf("\rProgress: [%-50s] %d%%", strings.Repeat("#", progress/2), progress)
 		}
