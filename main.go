@@ -13,7 +13,7 @@ import (
 func main() {
 	const (
 		xmin, ymin, xmax, ymax = -2, -2, 2, 2
-		width, height          = 8192, 8192
+		width, height          = 81920, 81920
 	)
 
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
