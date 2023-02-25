@@ -18,7 +18,7 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
-	for py := 0; py < height; py++ {
+	for py := 0; py < (height/2 + 1); py++ {
 		progress := py * 100 / height
 		if (py % 10) == 0 {
 			fmt.Printf("\rProgress: [%-50s] %d%%", strings.Repeat("#", progress/2), progress)
@@ -28,7 +28,9 @@ func main() {
 
 			x := float64(px)/width*(xmax-xmin) + xmin
 			z := complex(x, y)
-			img.Set(px, py, mandelbrot(z))
+			mandelbrot := mandelbrot(z)
+			img.Set(px, py, mandelbrot)
+			img.Set(px, height-py, mandelbrot)
 		}
 	}
 	f, err := os.Create("mandelbrot.jpg")
